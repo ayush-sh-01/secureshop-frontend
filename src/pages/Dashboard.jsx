@@ -24,10 +24,17 @@ export default function Dashboard() {
       const res = await client.get("/api/products/search", {
         params: { keyword: keyword || undefined, category: category || undefined, page, size: PAGE_SIZE },
       });
-      setProducts(res.data.content);
-      setTotalPages(res.data.totalPages);
+
+      // ✅ Safe Data Extraction: Handles Spring Data Page, raw Array, or nested objects safely
+      const items = Array.isArray(res.data) 
+        ? res.data 
+        : (res.data?.content || res.data?.products || []);
+
+      setProducts(items);
+      setTotalPages(res.data?.totalPages || 1);
     } catch {
       setError("Could not load products. Is the backend running?");
+      setProducts([]);
     } finally {
       setLoading(false);
     }
@@ -38,6 +45,9 @@ export default function Dashboard() {
     setPage(0);
     fetchProducts();
   }
+
+  // ✅ Extra defense against unexpected state mutations
+  const safeProducts = Array.isArray(products) ? products : [];
 
   return (
     <div className="page-container">
@@ -61,11 +71,11 @@ export default function Dashboard() {
 
       {loading ? (
         <p className="muted">Loading products...</p>
-      ) : products.length === 0 ? (
+      ) : safeProducts.length === 0 ? (
         <p className="muted">No products found.</p>
       ) : (
         <div className="product-grid">
-          {products.map((p) => (
+          {safeProducts.map((p) => (
             <div key={p.id} className="product-card">
               <h3>{p.name}</h3>
               <span className="badge">{p.category}</span>
