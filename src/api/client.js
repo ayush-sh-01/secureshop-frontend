@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Base URL comes from an environment variable so it's different
 // in local development vs production (Render). See .env.example.
-const baseURL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+const baseURL = import.meta.env.VITE_API_BASE_URL || "https://secureshop-spring-boot.onrender.com";
 
 const client = axios.create({
   baseURL,
