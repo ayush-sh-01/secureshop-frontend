@@ -1,13 +1,10 @@
 import axios from "axios";
 
-// Base URL comes from an environment variable so it's different
-// in local development vs production (Render). See .env.example.
+// Make sure the Render URL is hardcoded or properly loaded as fallback:
 const baseURL = import.meta.env.VITE_API_BASE_URL || "https://secureshop-spring-boot.onrender.com";
 
 const client = axios.create({
   baseURL,
-  // Required so the browser sends/receives the JSESSIONID cookie
-  // across origins (frontend and backend live on different domains).
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
